@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+    <!--<script src="https://unpkg.com/vue/dist/vue.js"></script>-->
+</head>
+<body>
+    <div id="todo-list-example">
+        <!--v-model 指令，它能轻松实现表单输入和应用状态之间的双向绑定---->
+        <input v-model="newTodoText" v-on:blur="addNewTodo" v-on:keyup.enter="addNewTodo" placeholder="add a todo">
+        <!--<input v-model="newTodoText" v-on:keyup.enter="addNewTodo" placeholder="add a todo">-->
+        <ul>
+            <li is="todo-item" v-for="(item,index) in todos" v-bind:todo="item" v-bind:key="item.id" v-on:remove="todos.splice(index,1)"></li>
+        </ul>
+    </div>
+
+<script type="text/javascript">
+    Vue.component('todo-item',{
+        props:['todo'],
+        template:'<li>{{todo.id}} - {{todo.title}}</li>'
+    });
+    var todoList = new Vue({
+        el:'#todo-list-example',
+        data:{
+            newTodoText:'',
+            todos:[
+                {id:1, title:'todo 1'},
+                {id:2, title:'todo 2'},
+                {id:3, title:'todo 3'}
+            ]
+        },
+        methods:{
+            addNewTodo:function(){
+                if(this.newTodoText){
+                    let oId = this.todos[this.todos.length -1].id;
+                    this.todos.push({id: ++oId , title:this.newTodoText});
+                    this.newTodoText='';
+                }
+            }
+        }
+    });
+
+
+</script>
+</body>
+</html>
