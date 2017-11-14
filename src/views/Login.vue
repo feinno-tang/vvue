@@ -18,11 +18,15 @@
   </section>
 </template>
 <script>
+    const STATUS_CODE= {
+        SUCCESS:'0',
+        ACCOUT_BEN_BANNED :'10000004'
+    };
     export default {
         data() {
             const validatePassword = (rule,value,callback)=>{
-                if(value.length < 6){
-                    callback(new Error('密码不能小于6位'))
+                if(value.length < 1){
+                    callback(new Error('密码不能小于1位'))
                 }else{
                     callback()
                 }
@@ -57,21 +61,32 @@
                 this.$refs.loginForm.resetFields();
             },
             handleLogin() {
-                console.log('enter');
                 this.$refs.loginForm.validate((valid) => {
                     if (valid) {
                         this.logining = true;
+                        let para = {loginName:this.loginForm.username,password:this.loginForm.password};
                         //NProgress.start();
-                        this.$store.dispatch('loginByUserName',this.loginForm).then((data)=>{
+                        this.$store.dispatch('loginByUserName',para).then((data)=>{
+                            console.log(data);
                             this.logining = false;
-                            let {msg, code, user } = data;
-                            if(code != 200){
+                            if(data.code != 200){
                                 this.$message({
-                                    message:msg,
+                                    message: data.code == STATUS_CODE.ACCOUT_BEN_BANNED ? '账号被禁用' : '用户名或者密码错误',
                                     type:'error'
                                 })
                             }else{
-                                this.$router.push({ path: '/' });
+                                let {code, user } = data;
+                                let menus = user.menus;
+                                this.$store.dispatch('GenerateRoutes',{menus}).then( () => { // 生成可访问菜单
+                                    this.$router.addRoutes(this.$store.getters.added_routes) //动态添加可访问路由表
+                                    this.$router.push({ path: '/' });
+                                }).catch(() => {
+                                    console.log('gen route error');
+                                    this.$store.dispatch('logOut');//清空token userinfo
+                                    //this.$store.dispatch('RemoveRoutes'); //清空用户routes
+                                    this.$router.push({ path: '/login' });
+                                });
+
                             }
                         }).catch(()=>{
                             console.log('error!!');
@@ -86,6 +101,7 @@
         },
         mounted(){
             document.querySelector('input[name="username"]').focus();
+             
         }
     }
 </script>

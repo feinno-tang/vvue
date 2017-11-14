@@ -117,8 +117,8 @@
 				},
 				editSelfPwdVisible:false,
                 editPwdLoading:false,
-				user_router2:this.$store.getters.all_routers,
-				user_router:this.$store.state.permission.routers
+				user_router:this.$store.getters.added_routes,
+				user_router2:this.$store.state.permission.add_routers
 			}
 		},
 		methods: {
@@ -162,8 +162,10 @@
 				this.$confirm('确认退出吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
-					this.$store.dispatch('logOut'); //
-					_this.$router.push('/login');
+					this.$store.dispatch('logOut').then(()=>{
+                        _this.$router.push('/login');
+                        window.location.reload();// hack duplicate route name
+					});
 				}).catch(() => {
 					
 				});
@@ -177,10 +179,6 @@
 			}
 		},
 		mounted() {
-			console.log(this.user_router)
-			console.log(this.user_router2)
-			//console.log(JSON.parse(this.user_router))
-			//console.log(JSON.parse(this.user_router2))
 			//console.log('this.$routes',this.$routes);
 			//console.log(this.$store.getters.user);
 			//console.log(this.$store.getters.token);
@@ -290,6 +288,9 @@
 			.menu-expanded{
 				flex:0 0 230px;
 				width: 230px;
+                ul{
+                    width:auto !important;
+                }
 			}
 			.content-container {
 				// background: #f1f2f7;

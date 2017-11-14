@@ -1,5 +1,5 @@
 import {constantRouterMap,asyncRouterMap} from '@/routes';
-import {getRoutes,setRoutes,deleteRoutes} from '@/common/system'
+//import {getRoutes,setRoutes,deleteRoutes} from '@/common/system'
 
 //menu名字或者id需要和后端约定死
 function getPermissionArray(menus){
@@ -36,11 +36,11 @@ function filterAsyncRouter(asyncRouterMap,permissionArray){
 
 const permission ={
     state:{
-        routers : getRoutes()
+        add_routers :[]
     },
     mutations:{
         SET_ROUTES:(state,routers)=>{
-            state.routers = routers;
+            state.add_routers = routers;
         }
     },
     actions:{
@@ -49,9 +49,9 @@ const permission ={
                 let accessdRouters;
                 const permissionArray = getPermissionArray(menus.menus); // 坑：menus 被{}b包裹 ~ ~ ~~
                 accessdRouters = filterAsyncRouter(asyncRouterMap,permissionArray);
-                const finalRouter = constantRouterMap.concat(accessdRouters)
-                commit('SET_ROUTES', finalRouter);
-                setRoutes(JSON.stringify(finalRouter)); //避免重复addRoutes
+                //const finalRouter = constantRouterMap.concat(accessdRouters)
+                commit('SET_ROUTES', accessdRouters);
+                //setRoutes(JSON.stringify(finalRouter)); //避免重复addRoutes
                 resolve();
             })    
         },
@@ -64,7 +64,7 @@ const permission ={
         RemoveRoutes({commit}){
             return new Promise((resolve) =>{
                 commit('SET_ROUTES','');
-                deleteRoutes();
+                //deleteRoutes();
                 resolve();
             })
         }

@@ -17,10 +17,12 @@ const user ={
     actions:{
         //用户名登陆
         loginByUserName({commit},userInfo){
-            console.log(userInfo.username.trim());
+            console.log(userInfo.loginName.trim());
             return new Promise((resolve,reject) => {
-                var params = {username:userInfo.username.trim(), password:userInfo.password};
+                debugger;
+                var params = {loginName:userInfo.loginName.trim(), password:userInfo.password};
                 requestLogin(params).then((response) => {
+                    debugger;
                     if(response.code == 200){
                         const data = response.user;
                         setToken(data.token);

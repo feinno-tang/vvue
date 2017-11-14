@@ -1,11 +1,8 @@
-//test
-export const getCount = state => {
-    return state.count
-}
+
 const getters = {
     token:state => state.user.token,
     user: state => state.user.user,
-    all_routers : state => state.permission.routers,
+    added_routes : state => state.permission.add_routers,
     
 }
 export default getters;

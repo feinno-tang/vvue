@@ -1,6 +1,6 @@
 <template>
     <section>
-        <!---新建权限 --->
+        <!---新建权限 -->
         <el-form :inline="true" :model="roleForm" :rules="rules" ref="roleForm">
             <el-form-item label="权限名称" prop="name">
                 <el-input v-model.trim="roleForm.name" placeholder="权限"></el-input>
@@ -8,7 +8,7 @@
             <el-button type="primary" @click="createAuth('roleForm')" icon="plus">创建</el-button>
         </el-form>
 
-        <!--- 权限列表--->
+        <!--- 权限列表-->
         <el-table :data="roles" :model="roles" v-loading="listLoading" stripe border style="width:100%">
             <el-table-column prop="id" label="编号" width="100px"></el-table-column>
             <el-table-column  prop="name" label="名称" width="360px">
@@ -31,7 +31,7 @@
 
         <!--修改用户角色弹层-->
         <el-dialog size="400" title="修改用户角色" v-model="editRoleVisible" :close-on-click-modal="false">
-            <el-button type="primary" icon="plus">确认修改</el-button>
+            <el-button type="primary" icon="plus" @click.native="editRole" >确认修改</el-button>
             <section v-for="menu in menus">
                 <h2>{{menu.header}}</h2>
                 <template v-for="subMenu in menu.childs">
@@ -42,7 +42,7 @@
                     <label>编辑<input type="radio" v-model="checkboxRadio[menu.menuType][subMenu.menuId]" :value="2"></label>
                 </template>
             </section>
-            <section>
+            <section style="display:none;">
                 <h2>配置语言</h2>
                 <template v-for="lan in languages">
                     <section>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-    import { addRole,getRoles  } from '../../api/api';
+    import { addRole,getRoles,editRole,deleteRole  } from '../../api/system';
     export default{
         data(){
             return {
@@ -84,7 +84,7 @@
         },
         methods:{
             createAuth(formName){
-                let para = Object.assign({},this.roleForm);
+                let para = Object.assign({},this.roleForm,{roles:''});
                 this.$refs[formName].validate((valid)=>{
                     console.log(para);
                     addRole(para).then((res)=>{
@@ -104,22 +104,29 @@
             },
             getAllRoles(){
                 this.listLoading = true;
-                getRoles().then((res)=>{
+                getRoles({}).then((res)=>{
                     console.log(res);
+                    debugger;
                     this.listLoading = false;
                     this.roles = res.data.roles;
                 })
             },
             editRole(roleId){
-                console.log(roleId);
+                alert(roleId);
+                editRole(para).then((res) => {
+                    console.log(res);
+                })
             },
             seeRole(roleId){
-                console.log(roleId);
+                alert(roleId);
                 this.editRoleVisible = true;
             },
             delRole(roleId){
                 alert(roleId);
-                console.log(roleId);
+                let para = {roleId: roleId};
+                deleteRole(para).then((res)=>{
+                    console.log(res);
+                })
             },
             getAllMenus(){
                 this.menus = [{
@@ -410,8 +417,8 @@
         mounted:function(){
             this.getAllRoles();
             this.getAllMenus();
-            this.getUserMenus();
-            this.getAllLangs();
+            //this.getUserMenus();
+            //this.getAllLangs();
         }
     }
 </script>
